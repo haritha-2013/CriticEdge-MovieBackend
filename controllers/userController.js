@@ -44,7 +44,7 @@ export const getAllUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
     try {
         // Get a user by ID from the database
-        const user = await User.findById(req.params.userid);
+        const user = await User.findById(req.params.userId);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found'});
@@ -63,7 +63,7 @@ export const updateUserByid = async (req, res) => {
     
         // Update user by ID
         const updatedUser = await User.findByIdAndUpdate(
-           req.params.id,
+           req.params.userId,
            { username, email, passwordHash, role, profilePicture, bio},
            { new: true} // Return the updated user
         );
@@ -84,7 +84,7 @@ export const updateUserByid = async (req, res) => {
 export const deleteUserById = async (req, res) => {
     try {
         // Delete the user by ID
-        const deletedUser = await User.findByIdAndDelete(req.params.id);
+        const deletedUser = await User.findByIdAndDelete(req.params.userId);
 
         if (!deletedUser) {
             return res.status(404).json({ message: 'User not found'});

@@ -2,20 +2,18 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const UserSchema = new mongoose.Schema({
-    userID: {
-        type: String,
-        unique: true,
-        required: true
-    },
+ 
     username: {
         type: String,
-        unique: true,
-        required: true
+        required: true,
+        trim: true
     },
     email: {
         type: String,
-        unique: true,
-        required: true
+         required: true,
+        trim: true,
+        lowercase: true,
+        unique: true
     },
     passwordHash: {
         type: String,
@@ -34,7 +32,8 @@ const UserSchema = new mongoose.Schema({
         type: String
     },
     joinedDate: {
-        type: Date, default: Date.now
+        type: Date, 
+        default: Date.now
     },
 });
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
+import cookieParser from 'cookie-parser';
 
 
 
@@ -13,19 +14,21 @@ import movieRoutes from './routes/movieRoutes.js';
 import genreRoutes from './routes/genreRoute.js';
 import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import authenticate from './middlewares/authMiddleware.js';
+import { authenticate, authorize } from './middlewares/authMiddleware.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json()) ; //Middleware to parse JSON req.body
+app.use(cookieParser());
+
 connectDB(); // Connect to the database
 
 // Use admin routes 
-app.use('/api/admin', authenticate, adminRoutes);
+app.use('/admin', adminRoutes);
 
 // Use auth routes
-app.use('/api/auth', authenticate, authRoutes);
+app.use('/auth',  authRoutes);
 
 // Use the user routes
 app.use('/api/users', userRoute);

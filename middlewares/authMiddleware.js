@@ -3,9 +3,9 @@ import User from '../models/userModel.js';
 
 
 // Middlewares are used to protect routes and role based access control
-// To authenticate users
+
 export const authenticate = async (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.cookies.token;
     
     if (!token) {
         return res.status(401).json({ message: "No token, authorization denied"});
@@ -32,7 +32,3 @@ try {
        };
   };
 
-
-const authMiddleware = { authenticate, authorize }; // Export as a single object
-
-export default authenticate;

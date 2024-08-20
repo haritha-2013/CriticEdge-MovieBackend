@@ -1,24 +1,21 @@
 import express from 'express';
 import { protect, isAdmin } from '../middlewares/adminMiddleware.js';
-import { authenticate} from '../middlewares/authMiddleware.js';
-import { createAdmin, deleteUser, getAllUsers, getUserById, signupAdmin } from '../controllers/adminController.js';
+import { adminLogin, adminSignup,  deleteUser, getAllUsers, getUserById } from '../controllers/adminController.js';
 
 const router = express.Router();
 
 // Route to sign up a new admin
-router.post('/admin/signup', protect, isAdmin, createAdmin);
+router.post('/signup', adminSignup);
+// Route to log in as admin
+router.post('/login', adminLogin);
 
-
-router.use(protect); // Authentication middlewares
-router.use(isAdmin);
+// Admin access routes
+//router.use(protect); // Authentication middlewares
+//router.use(isAdmin);
 
 // Admin only routes
-router.get('/users', getAllUsers);
-router.get('/users/:id', getUserById);
-router.post('/users', createAdmin); // To create a new admin user
-router.delete('users/:id', deleteUser);
-
-
-
+router.get('/users',protect, isAdmin,  getAllUsers);
+router.get('/users/:id',protect,isAdmin, getUserById);
+router.delete('/users/:id',protect,isAdmin, deleteUser);
 
 export default router;

@@ -1,68 +1,68 @@
 import User from "../models/userModel.js";
-import { generateToken } from "../utils/generateToken.js";
-import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// To generate JWT
+const generateToken = (user) => {
+    return jwt.sign(
+        { userId: user._id, role: user.role },
+        JWT_SECRET, 
+        { expiresIn: '1h'}  
+ );
+};
 
 // Admin signup
 
-export const signupAdmin = async (req, res) => {
+export const adminSignup = async (req, res) => {
     const {username, email, password} = req.body;
-
     try {
         let user = await User.findOne({ email });
         if(user) {
             return res.status(400).json({ message: 'user already exists' });
         }
 
-        // Create a new admin user
-        user = new User({
-            username,
-            email,
-            passwordHash: await bcrypt.hash(password, 10),
-            role: 'admin' 
-
-        });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user = new User({ username, email, passwordHash: hashedPassword, role: 'admin' });
         await user.save();
-        // Generate token
-        const token = generateToken(user._id);
+      
+        const token = generateToken(user);
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'none' 
+    });
+            res.status(201).json({ message: 'Admin created successfully' });
+        } catch (error) {
+            console.error('Signup error:', error.message);
+            res.status(500).json({ error: 'Server error' });
+        }
 
-        res.status(201).json({
-            _id: user._id,
-            username: user.baseModelName,
-            email: user.email,
-            token // Send token along with response
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-};
+        };
 
-// Create a new user (Admin only)
-export const createAdmin = async (req, res) => {
-    const { username, email, password, role } = req.body;
-    if (role !== 'admin') {
-        return res.status(400).json({ message: 'Role must be admin' });
-    }
+// Admin Login
+    export const adminLogin = async (req, res) => {
+    const { email, password } = req.body;
     try {
-        let user = await User.findOne({ email });
-        if (user) {
-            return res.status(400).json({ message: 'User already exists' }); 
+        const user = await User.findOne({ email });
+        if (!user || !(await bcrypt.compare(password, user.passwordHash)) || user.role !== 'admin') {
+            return res.status(400).json({ error: 'Invalid credentials or not admin' });
         }
 
-        user = new User ({
-            username,
-            email,
-            passwordHash: await bcrypt.hash(password, 10),
-            role
+        const token = generateToken(user);
+        res.cookie('token', token, { 
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'none' 
         });
-        await user.save();
-        res.status(201).json({
-            user
-        });
-} catch (error) {
-         res.status(500).json({ success: false,  message: 'Server error' });    
-        }
+
+        res.status(200).json({ message: 'Logged in successfully' });
+    } catch (error) {
+        console.error('Login error:', error.message);
+        res.status(500).json({ error: 'Server error' });
+    }
 };
-
 
 
 // Get all users (Admin only)
