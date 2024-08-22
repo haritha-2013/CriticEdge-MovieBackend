@@ -3,12 +3,9 @@ import mongoose from "mongoose";
 const FavoriteSchema = new mongoose.Schema({
     favoriteID: {
         type: String,
-        unique: true
+        
     },
-    userID: {
-        type: String, 
-        required: true
-    },
+   
     movieID: {
         type: String,
         required: true

@@ -4,13 +4,9 @@ import Review from "./reviewModel";
 const CommentSchema = new mongoose .Schema({
     commentID: {
         type: String,
-        unique: true
+        
     },
-    userID: {
-        type: String,
-        required: true
-    },
-    reviewID: {
+   reviewID: {
         type: String,
         required: true
     },

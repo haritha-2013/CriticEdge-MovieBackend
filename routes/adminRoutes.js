@@ -10,12 +10,12 @@ router.post('/signup', adminSignup);
 router.post('/login', adminLogin);
 
 // Admin access routes
-//router.use(protect); // Authentication middlewares
-//router.use(isAdmin);
+router.use(protect, isAdmin); // Authentication middlewares
+
 
 // Admin only routes
-router.get('/users',protect, isAdmin,  getAllUsers);
-router.get('/users/:id',protect,isAdmin, getUserById);
-router.delete('/users/:id',protect,isAdmin, deleteUser);
+router.get('/users', getAllUsers);
+router.get('/users/:id', getUserById);
+router.delete('/users/:id', deleteUser);
 
 export default router;

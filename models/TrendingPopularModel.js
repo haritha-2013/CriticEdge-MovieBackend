@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const TrendingPopularContentSchema = new mongoose.Schema({
     contentID: {
         type: String,
-        unique: true
+        
     },
     movieID: {
         type: String,

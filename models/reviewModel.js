@@ -4,15 +4,12 @@ const ReviewSchema = new mongoose.Schema({
 
     reviewID: {
         type: String,
-        unique: true
+        
     },
-    userID: {
-        type: String,
-        required: true
-    },
+  
     movieID: {
         type: String, 
-        required: true
+        
     },
     rating : {
         type: Number, 

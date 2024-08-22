@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 import cookieParser from 'cookie-parser';
 
@@ -14,7 +13,8 @@ import movieRoutes from './routes/movieRoutes.js';
 import genreRoutes from './routes/genreRoute.js';
 import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import { authenticate, authorize } from './middlewares/authMiddleware.js';
+
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -25,7 +25,7 @@ app.use(cookieParser());
 connectDB(); // Connect to the database
 
 // Use admin routes 
-app.use('/admin', adminRoutes);
+app.use('/admin',  adminRoutes);
 
 // Use auth routes
 app.use('/auth',  authRoutes);
@@ -56,3 +56,5 @@ app.use('/api/genres', genreRoutes);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+export default app;

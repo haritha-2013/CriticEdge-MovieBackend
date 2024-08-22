@@ -3,13 +3,14 @@ import { getProfile, updateProfile } from '../controllers/userController.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import { protect, isAdmin } from '../middlewares/adminMiddleware.js';
 import {  deleteUser, getAllUsers, getUserById } from '../controllers/adminController.js';
+import { signup } from '../controllers/authController.js';
 
 
 
 
 const router = express.Router(); // Create a new router
 // Route to sign up a new admin
-router.post('/admin/signup' , protect, isAdmin);
+router.post('/admin/signup', signup);
 
 
 // Routes for user profile 

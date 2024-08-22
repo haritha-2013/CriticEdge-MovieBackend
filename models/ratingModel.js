@@ -3,11 +3,9 @@ import mongoose from "mongoose";
 const RatingSchema = new mongoose.Schema({
     ratingID: {
         type: String,
-        unique: true
+        
     },
-    usedID: { type: String, 
-        required: true
-    },
+    
     movieID: {
         type: String, 
         required: true

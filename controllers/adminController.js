@@ -1,16 +1,16 @@
 import User from "../models/userModel.js";
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // To generate JWT
 const generateToken = (user) => {
-    return jwt.sign(
+   return jwt.sign(
         { userId: user._id, role: user.role },
         JWT_SECRET, 
-        { expiresIn: '1h'}  
- );
+       { expiresIn: '1h'}  
+);
 };
 
 // Admin signup
@@ -20,7 +20,7 @@ export const adminSignup = async (req, res) => {
     try {
         let user = await User.findOne({ email });
         if(user) {
-            return res.status(400).json({ message: 'user already exists' });
+            return res.status(400).json({ message: 'Admin already exists' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,13 +30,11 @@ export const adminSignup = async (req, res) => {
         const token = generateToken(user);
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none' 
     });
             res.status(201).json({ message: 'Admin created successfully' });
         } catch (error) {
             console.error('Signup error:', error.message);
-            res.status(500).json({ error: 'Server error' });
+            res.status(500).json({ error: 'Server error!' });
         }
 
         };
@@ -53,8 +51,8 @@ export const adminSignup = async (req, res) => {
         const token = generateToken(user);
         res.cookie('token', token, { 
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none' 
+            //secure: process.env.NODE_ENV === 'production',
+            //sameSite: 'none' 
         });
 
         res.status(200).json({ message: 'Logged in successfully' });
