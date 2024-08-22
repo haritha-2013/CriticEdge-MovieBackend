@@ -1,100 +1,116 @@
-import User from '../models/userModel.js';
+import bcrypt from 'bcrypt';
+//import jwt from 'jsonwebtoken';
+import User  from '../models/userModel.js';
+import { generateUserToken } from '../utils/generateToken.js';
+import router from '../routes/userRoute.js';
 
-export const getProfile = async (req, res) => {
+ export const userCreate = async(req, res, next) => {
     try {
-        const user = await User.findById(req.user._id);
-        res.status(200).json(user);
+        console.log('create route hitted'); 
+
+      const {username,email,password} = req.body;
+      if (!username || !email || !password ) {
+return res.status(400).json({ success:false , message: "All fields are required" })
+      }
+
+      const userExist = await User.findOne({ email });
+
+      if (userExist) {
+        return res.status(404).json({success: false, message: "User already exist" });
+      }
+
+        const salt = 10;
+        const hashedPassword = bcrypt.hashSync(password, salt);
+        const newUser = new User({username,email,password: hashedPassword });
+        await newUser.save();
+
+        // Creating token
+      const token = generateUserToken(email);
+
+
+      res.cookie('token', token);
+      res.json({success:true, message: "user created successfully"});
+    
+    
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-};
+        res.status(400).json({message:'internalserver'});
+ }
+ };
 
-export const updateProfile = async (req, res) => {
-    const { username, bio, profilePicture } = req.body;
-
+ export const userLogin = async(req, res, next) => {
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            req.user._id,
-        { username, bio, profilePicture },
-    { new: true }        
-        );
+      const {email,password} = req.body;
+      if ( !email || !password ) {
+return res.status(400).json({ success:false , message: "All fields are required" })
+      }
+      
+      // Compare password
+      const userExist = await User.findOne({ email });
 
-    res.status(200).json(updatedUser);
-} catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-};
-
-// Get all users
-
-export const getAllUsers = async (req, res) => {
-    try {
-
-        // Get all users from the database
-        const users = await User.find();
-
-        res.status(200).json(users);
-
-    } catch (err) {
-        res.status(500).json({ message: err.message});
-    } // err represents the error object with details about what went wrong. and give as error message details
-};
-
-// Get user by ID
-export const getUserById = async (req, res) => {
-    try {
-        // Get a user by ID from the database
-        const user = await User.findById(req.params.userId);
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found'});
-        }
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(500).json({ message: err.message});    
-    }
-};
-
-// Update a user by ID
-export const updateUserByid = async (req, res) => {
-    try {
-        // Get update details from req.body
-        const { username, email, passwordHash, role, profilePicture, bio} = req.body;
+      if (!userExist) {
+        return res.status(404).json({success: false, message: "Usre does not exist" });
+      }
+       
+      const passwordMatch = bcrypt.compareSync(password,userExist.password); // true
+       
+      if(!passwordMatch) {
+        return res.status(400).json({success: false, message: "User not authenticated" })
+      }
+       
+      
+      // Creating token
+      const token = generateUserToken(email);
+      res.cookie('token', token);
+      res.json({success:true, message: "user login successfully"});
     
-        // Update user by ID
-        const updatedUser = await User.findByIdAndUpdate(
-           req.params.userId,
-           { username, email, passwordHash, role, profilePicture, bio},
-           { new: true} // Return the updated user
-        );
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: "User not found"});
-        }
-
-        res.status(200).json(updatedUser);
-    } catch (err) {
-        res.status(500).json({ message: err.message});
-    }
-        
     
-};
+    } catch (error) {
+        res.status(500).json({message:'internal server'});
+ }
+ };
+// Logout
 
-// Delete a user by ID
-export const deleteUserById = async (req, res) => {
+export const userLogout = async(req, res, next) => {
     try {
-        // Delete the user by ID
-        const deletedUser = await User.findByIdAndDelete(req.params.userId);
+     res.clearCookie('token');
+     res.json({success:true, message: "user logout successfully"});
+     } catch (error) {
+        res.status(500).json({message:'internal server'});
+ }
+ };
 
-        if (!deletedUser) {
-            return res.status(404).json({ message: 'User not found'});
-            }
+ 
+ 
+ 
+ 
+ 
+ // User profile
+ export const userProfile= async(req, res, next) => {
+    try {
+    const {id} = req.params;
+    const useData = await User.findById(id)
+     
+    res.json({success:true, message: "User data fetched", data: useData });
+     } catch (error) {
+        res.status(500).json({message:'internal server'});
+ }
+ };
 
-            res.status(200).json({ message: 'User deleted successfully'});
-    } catch (err) {
-        res.status(500).json({ message: err.message});
-    }
 
-};
+ // Check user
+export const checkUser = async(req, res, next) => {
+    try {
+    
+        const user = req.user;
+        if(!user){
+            return res.status(400).json({success: true, message:" User not authenticated" });
+        }
+     res.json({success:true, message: "User data fetched", data: useData });
+     } catch (error) {
+        res.status(500).json({message:'internal server'});
+ }
+ };
+
+
 
 

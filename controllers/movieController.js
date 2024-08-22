@@ -4,9 +4,9 @@ import Movie from '../models/movieModel.js';
 export const createMovie = async (req, res) => {
     try {
         const newMovie = new Movie(req.body); // Data from request body 
-        const saveMovie = await newMovie.save(); // Save the data to the database
+        const savedMovie = await newMovie.save(); // Save the data to the database
 
-        res.status(201).json(saveMovie);
+        res.status(201).json(savedMovie);
     } catch (error) {
         res.status(400).json({ message: error.message });
         }
@@ -25,7 +25,7 @@ export const getAllMovies = async (req, res) => {
 // Get movie by ID
 export const getMovieById = async (req, res) => {
     try {
-        const movie = await Movie.findOne ({ movieID: req.params}); // Find a movie from the database by using its ID
+        const movie = await Movie.findOne (req.params.id ); // Find a movie from the database by using its ID
         if (movie) {
             res.status(200).json(movie);
         } else {
@@ -41,7 +41,7 @@ export const getMovieById = async (req, res) => {
 export const updateMovie = async (req, res) => {
     try {
         const updatedMovie = await Movie.findOneAndUpdate(
-            { movieID: req.params.id},
+           req.params.id,
             req.body,
             { new: true } // Find the movie by using its Id and update it and return updated data
         );
@@ -58,7 +58,7 @@ export const updateMovie = async (req, res) => {
 // Delete a movie
 export const deleteMovie = async (req, res ) => {
     try {
-        const deletedMovie = await Movie.findOneAndDelete({ movieID: req.parama.id }); // Find the movie by using its Id and delete it from the database
+        const deletedMovie = await Movie.findByIdAndDelete(req.parama.id ); // Find the movie by using its Id and delete it from the database
 
         if(deletedMovie) {
             res.status(200).json({ message: 'Movie deleted successfully' });

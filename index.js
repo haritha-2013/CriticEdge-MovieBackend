@@ -11,8 +11,8 @@ import ratingRoutes from './routes/ratingRoutes.js';
 import premiumContentRoutes from './routes/premiumContentRoutes.js';
 import movieRoutes from './routes/movieRoutes.js';
 import genreRoutes from './routes/genreRoute.js';
-import adminRoutes from './routes/adminRoutes.js';
-import authRoutes from './routes/authRoutes.js';
+import adminRoutes from './routes/adminRoute.js';
+
 
 
 
@@ -27,8 +27,7 @@ connectDB(); // Connect to the database
 // Use admin routes 
 app.use('/admin',  adminRoutes);
 
-// Use auth routes
-app.use('/auth',  authRoutes);
+
 
 // Use the user routes
 app.use('/api/users', userRoute);

@@ -1,35 +1,34 @@
 import jwt from 'jsonwebtoken';
-import User from "../models/userModel.js";
 
-// Authentication middleware
-export const protect = async (req, res, next) => {
-     const token = req.cookies.token; // Extract token from cookies
-     if (token){
-         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user= await User.findById(decoded.userId).select('-passwordHash') 
-            if(!req.user) {
-                return res.status(401).json({ message: 'User not found' });           
-             }
-             next();
-            } catch(error) {
-                console.error('Token verification error:', error.message);
-          res.status(401).json({ message: 'Not authorized, token failed' });
+export const authAdmin= (req, res, next) => {
+    try {
+        const {token} = req.cookies;
+        
+        if(!token){ 
+            return res.status(400).json({ success: false, message: "Admin not authenticated"});
         }
-     } else {
-        res.status(401).json({ message: 'Not authorized, no token' });
-     }
-};
+        
+        const tokenVerified = jwt.verify(token, process.env.JWT_SECRET_KEY);
+     
+        if(!tokenVerified){
+            return res.status(400).json({ success:false, message: "Admin not authenticated"});
 
-// Admin check middleware
-export const isAdmin =  (req, res, next) => {
-    
-    if(req.user && req.user.role === 'admin') {
+        }
+
+        if(tokenVerified.role!== "admin") {
+            return res.status(400).json({message:"User not authenticated" });
+        }
+
+        req.user = tokenVerified;
         next();
-    }else{
-        return res.status(403).json({ message: 'Admin access required' });
+    } catch (error) {
+        console.log(error);
     }
-    
 };
 
-export default isAdmin;
+export default authAdmin;
+
+
+
+
+

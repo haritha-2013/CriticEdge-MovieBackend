@@ -2,9 +2,9 @@ import Genre from '../models/genreModel.js';
 
 // Create new genre 
 export const createGenre = async (req, res ) => {
-    const { genreID, name, description } = req.body;
+    const {name, description } = req.body;
     try {
-        const genre = new Genre ({ genreID, name, description }); // Create a new genre
+        const genre = new Genre ({ name, description }); // Create a new genre
         const savedGenre = await genre.save(); // Save the genre to the database
         res.status(201).json(savedGenre); // Saved genre in return
 
@@ -28,7 +28,7 @@ export const getGenres = async (req, res) => {
 // Get genre by ID
 export const getGenreById = async (req , res) => {
     try {
-        const genre = await Genre.findById(req.params.id);
+        const genre = await Genre.findById(req.params.genreid);
         if(!genre) {
             return res.status(404).json({ message: "Genre not found" });
         }
@@ -40,9 +40,9 @@ export const getGenreById = async (req , res) => {
 
 // Update genres
 export const updateGenre = async (req, res) => {
-    const { name, description } = req.body; // Genre data from the request body
+    //const { name, description } = req.body; // Genre data from the request body
     try {
-         const genre = await Genre.findById(req.params.id);
+         const genre = await Genre.findByIdAndUpdate(req.params.genreid, req.body, { new: true});
          if (!genre) {
              return res.status(404).json({ message: "Genre not found" });
 

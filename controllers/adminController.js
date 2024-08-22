@@ -1,105 +1,117 @@
-import User from "../models/userModel.js";
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+//import jwt from 'jsonwebtoken';
+import { generateUserToken } from '../utils/generateToken.js';
+import Admin from '../models/adminModel.js';
 
-const JWT_SECRET = process.env.JWT_SECRET;
 
-// To generate JWT
-const generateToken = (user) => {
-   return jwt.sign(
-        { userId: user._id, role: user.role },
-        JWT_SECRET, 
-       { expiresIn: '1h'}  
-);
-};
-
-// Admin signup
-
-export const adminSignup = async (req, res) => {
-    const {username, email, password} = req.body;
+ export const adminCreate = async(req, res, next) => {
     try {
-        let user = await User.findOne({ email });
-        if(user) {
-            return res.status(400).json({ message: 'Admin already exists' });
-        }
+        console.log('create route hitted'); 
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user = new User({ username, email, passwordHash: hashedPassword, role: 'admin' });
-        await user.save();
+      const {username,email,password,role} = req.body;
+      if (!username || !email || !password ) {
+return res.status(400).json({ success:false , message: "All fields are required" })
+      }
+
+      const adminExist = await Admin.findOne({ email,role });
+
+      if (adminExist) {
+        return res.status(404).json({success: false, message: "Admin already exist" });
+      }
+
+        const salt = 10;
+        const hashedPassword = bcrypt.hashSync(password, salt);
+        const newAdmin = new Admin({username,email,password: hashedPassword,role:"admin" });
+        await newAdmin.save();
+
+        // Creating token
+      const token = generateUserToken(email, "admin");
+
+
+      res.cookie('token', token);
+      res.json({success:true, message: "Admin created successfully"});
+    
+    
+    } catch (error) {
+        res.status(400).json({message:'internalserver'});
+ }
+ };
+
+ // Admin login
+ 
+ export const adminLogin = async(req, res, next) => {
+    try {
+      const {email,password} = req.body;
+      if ( !email || !password ) {
+return res.status(400).json({ success:false , message: "All fields are required" })
+      }
       
-        const token = generateToken(user);
-        res.cookie('token', token, {
-            httpOnly: true,
-    });
-            res.status(201).json({ message: 'Admin created successfully' });
-        } catch (error) {
-            console.error('Signup error:', error.message);
-            res.status(500).json({ error: 'Server error!' });
-        }
+      // Compare password
+      const userExist = await User.findOne({ email });
 
-        };
-
-// Admin Login
-    export const adminLogin = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email });
-        if (!user || !(await bcrypt.compare(password, user.passwordHash)) || user.role !== 'admin') {
-            return res.status(400).json({ error: 'Invalid credentials or not admin' });
-        }
-
-        const token = generateToken(user);
-        res.cookie('token', token, { 
-            httpOnly: true,
-            //secure: process.env.NODE_ENV === 'production',
-            //sameSite: 'none' 
-        });
-
-        res.status(200).json({ message: 'Logged in successfully' });
+      if (!userExist) {
+        return res.status(404).json({success: false, message: "User does not exist" });
+      }
+       
+      const passwordMatch = bcrypt.compareSync(password,userExist.password); // true
+       
+      if(!passwordMatch) {
+        return res.status(400).json({success: false, message: "User not authenticated" })
+      }
+       
+      
+      // Creating token
+      const token = generateUserToken(email);
+      res.cookie('token', token);
+      res.json({success:true, message: "user login successfully"});
+    
+    
     } catch (error) {
-        console.error('Login error:', error.message);
-        res.status(500).json({ error: 'Server error' });
-    }
-};
+        res.status(500).json({message:'internal server'});
+ }
+ };
 
+ // Admin logout
 
-// Get all users (Admin only)
-export const getAllUsers = async (req, res) => {
+export const userLogout = async(req, res, next) => {
     try {
-        const users = await User.find().select('-passwordHash'); 
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-};
+     res.clearCookie('token');
+     res.json({success:true, message: "user logout successfully"});
+     } catch (error) {
+        res.status(500).json({message:'internal server'});
+ }
+ };
 
 
-// Get user By ID
-export const getUserById = async (req, res) => {
-    try { 
-        const user = await User.findById(req.params.id).select('-passwordHash');
-    if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-
-    }
-    res.json(user);
-} catch (error) {
-    res.status(500).json({ message: 'Server error  '});
-}
-};
-
-
-
-// Delete user (Admin only)
-
-export const deleteUser = async (req, res) => {
+ // Admin profile
+ export const adminProfile= async(req, res, next) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        };
-        res.json({ message: 'User deleted successfully' });
-    } catch(error) {
-        res.status(500).json({ message: 'Server error'});
-    }
-};
+    const {id} = req.params;
+    const useData = await Admin.findById(id)
+     
+    res.json({success:true, message: "Admin data fetched", data: useData });
+     } catch (error) {
+        res.status(500).json({message:'internal server'});
+ }
+ };
+
+
+ // Check user
+
+ export const checkAdmin = async(req, res, next) => {
+    try {
+    
+        const admin = req.admin;
+        
+        if(!admin){
+            return res.status(400).json({success: true, message:" User not authenticated" });
+        }
+     res.json({success:true, message: "User data fetched", data: useData });
+     } catch (error) {
+        res.status(500).json({message:'internal server'});
+ }
+ };
+
+
+
+

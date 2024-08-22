@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', getGenres);
 
 // Get genre by Id
-router.get('/genres/:id', getGenreById);
+router.get('api/genres/:id', getGenreById);
 
 // Create genre 
 router.post('/', createGenre);

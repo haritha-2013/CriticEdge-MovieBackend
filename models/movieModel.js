@@ -1,10 +1,7 @@
 import mongoose from "mongoose";
 
 const MovieSchema = new mongoose.Schema({
-    movieID: {
-        type: String,
-        
-    },
+    
     title: {
         type: String,
         required: true
@@ -31,13 +28,15 @@ const MovieSchema = new mongoose.Schema({
         type: [String]
     },
     rating: {
-        type: Number,default: 0
+        type: Number,
+        default: 0
     },
     crew: {
         type: [String]
     },
     category: {
-        type: String,default: 'regular'
+        type: String,
+        default: 'regular'
     }
 
 });
