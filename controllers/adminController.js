@@ -49,20 +49,20 @@ return res.status(400).json({ success:false , message: "All fields are required"
       const userExist = await Admin.findOne({ email });
 
       if (!userExist) {
-        return res.status(404).json({success: false, message: "User does not exist" });
+        return res.status(404).json({success: false, message: "Admin does not exist" });
       }
        
       const passwordMatch = bcrypt.compareSync(password,userExist.password); // true
        
       if(!passwordMatch) {
-        return res.status(400).json({success: false, message: "User not authenticated" })
+        return res.status(400).json({success: false, message: "Admin not authenticated" })
       }
        
       
       // Creating token
-      const token = generateUserToken(email);
+      const token = generateUserToken(email,"admin");
       res.cookie('token', token);
-      res.json({success:true, message: "user login successfully"});
+      res.json({success:true, message: "Admin login successfully"});
     
     
     } catch (error) {
@@ -103,7 +103,7 @@ export const adminLogout = async(req, res, next) => {
         const admin = req.admin;
         
         if(!admin){
-            return res.status(400).json({success: true, message:" User not authenticated" });
+            return res.status(400).json({success: true, message:" Admin not authenticated" });
         }
      res.json({success:true, message: "User data fetched", data: useData });
      } catch (error) {

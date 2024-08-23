@@ -46,6 +46,9 @@ app.use('/api/movies', movieRoutes);
 // USe the genre routes
 app.use('/api/genres', genreRoutes);
 
+app.all("*", (req, res, next) => {
+  res.status(404).json({ message: "end point does not exist" });
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
