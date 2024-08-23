@@ -37,6 +37,8 @@ return res.status(400).json({ success:false , message: "All fields are required"
  }
  };
 
+
+  // Login
  export const userLogin = async(req, res, next) => {
     try {
       const {email,password} = req.body;
@@ -48,7 +50,7 @@ return res.status(400).json({ success:false , message: "All fields are required"
       const userExist = await User.findOne({ email });
 
       if (!userExist) {
-        return res.status(404).json({success: false, message: "Usre does not exist" });
+        return res.status(404).json({success: false, message: "User does not exist" });
       }
        
       const passwordMatch = bcrypt.compareSync(password,userExist.password); // true
@@ -61,7 +63,7 @@ return res.status(400).json({ success:false , message: "All fields are required"
       // Creating token
       const token = generateUserToken(email);
       res.cookie('token', token);
-      res.json({success:true, message: "user login successfully"});
+      res.json({success:true, message: "User logged in successfully"});
     
     
     } catch (error) {

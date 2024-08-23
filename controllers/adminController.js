@@ -12,8 +12,7 @@ import Admin from '../models/adminModel.js';
       if (!username || !email || !password ) {
 return res.status(400).json({ success:false , message: "All fields are required" })
       }
-
-      const adminExist = await Admin.findOne({ email,role });
+    const adminExist = await Admin.findOne({ email,role });
 
       if (adminExist) {
         return res.status(404).json({success: false, message: "Admin already exist" });
@@ -47,7 +46,7 @@ return res.status(400).json({ success:false , message: "All fields are required"
       }
       
       // Compare password
-      const userExist = await User.findOne({ email });
+      const userExist = await Admin.findOne({ email });
 
       if (!userExist) {
         return res.status(404).json({success: false, message: "User does not exist" });
@@ -73,10 +72,10 @@ return res.status(400).json({ success:false , message: "All fields are required"
 
  // Admin logout
 
-export const userLogout = async(req, res, next) => {
+export const adminLogout = async(req, res, next) => {
     try {
      res.clearCookie('token');
-     res.json({success:true, message: "user logout successfully"});
+     res.json({success:true, message: "Admin logged out successfully"});
      } catch (error) {
         res.status(500).json({message:'internal server'});
  }

@@ -1,9 +1,6 @@
 import express from 'express';
 import { connectDB } from './config/db.js';
 import cookieParser from 'cookie-parser';
-
-
-
 import userRoute from './routes/userRoute.js';
 import trendingPopularContentRoutes from './routes/trendingPopularContentRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
@@ -25,9 +22,7 @@ app.use(cookieParser());
 connectDB(); // Connect to the database
 
 // Use admin routes 
-app.use('/admin',  adminRoutes);
-
-
+app.use('/api/admin',  adminRoutes);
 
 // Use the user routes
 app.use('/api/users', userRoute);

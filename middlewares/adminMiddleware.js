@@ -15,7 +15,7 @@ export const authAdmin= (req, res, next) => {
 
         }
 
-        if(tokenVerified.role!== "admin") {
+        if(tokenVerified.role !== "admin") {
             return res.status(400).json({message:"User not authenticated" });
         }
 
