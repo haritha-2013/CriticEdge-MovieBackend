@@ -5,10 +5,6 @@ const PremiumContentSchema = new mongoose.Schema({
         type: String,
         
     },
-    movieID: {
-        type: String,
-        required: true
-    },
     accessLevel: {
         type: String,
         required: true

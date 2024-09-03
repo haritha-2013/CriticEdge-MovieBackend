@@ -78,7 +78,7 @@ export const deletePremiumContent = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const deletePremiumContent = await PremiumContent.findByIdAndDelete({ premiumContentID: id}); // Find by id and delete it
+        const deletePremiumContent = await PremiumContent.findOneAndDelete({ premiumContentID: id}); // Find by id and delete it
     
     if (!deletePremiumContent) {
         return res.status(404).json({ error: "Premium content not found" });

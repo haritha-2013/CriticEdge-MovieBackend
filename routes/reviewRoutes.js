@@ -1,18 +1,22 @@
 import express from 'express';
-import { deleteReview, getReviewID, getReviewsByMovie, updateReview } from '../controllers/reviewController.js';
+import authUser from '../middlewares/authMiddleware.js';
+import { createReview, deleteReview, getReviewByID, getReviewsByMovie, updateReview } from '../controllers/reviewController.js';
 
 const router = express.Router();
 
 // Create a new review
-router.get('/reviews/movie/:movieID', getReviewsByMovie);
+router.post('/',authUser, createReview);
 
-// Get a review by ID
-router.get('/reviews/:reviewID', getReviewID);
+// Get all review of a movie
+router.get('/', getReviewsByMovie);
+
+// Get review by ID
+router.get('/:reviewID', getReviewByID);
 
 // Update a review
-router.put('/reviews/:reviewID', updateReview);
+router.put('/:reviewID',authUser, updateReview);
 
 // Delete a review
-router.delete('/reviews/:reviewID', deleteReview);
+router.delete('/:reviewID',authUser, deleteReview);
 
-export default router; // 
+export default router; 

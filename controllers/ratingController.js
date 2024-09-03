@@ -33,7 +33,12 @@ export const getRatings = async (req, res) => {
 export const getRatingByID = async (req, res) => {
     try {
         const {id} = req.params; // Get the ratingID from the request parameters
-        const rating = await Rating.findOne({ ratingID: id}); // Get the rating by ID
+        const trimmedId = id.trim();
+
+        if (!mongoose.Types.ObjectId.isValid(trimmedId)) {
+            return res.status(400).json({ error: "Invalid ID format" });
+        }
+        const rating = await Rating.findById(trimmedId); // Get the rating by ID
 
         if (!rating) {
             return res.status(404).json({ error: "Rating not found" });
@@ -50,6 +55,10 @@ export const updateRating = async (req, res) => {
         const { id } = req.params; // Get ID from the request parameters
         const { rating } = req.body; // Get updated rating value from the request body
         
+        const trimmedId = id.trim();
+        if (!mongoose.Types.ObjectId.isValid(trimmedId)) {
+            return res.status(400).json({ error: "Invalid ID format" });
+        }
         const updateRating = await Rating.findOneAndUpdate(
             { ratingID: id }, // Find the rating by ID and we get the new rating 
             { rating },
@@ -69,6 +78,10 @@ export const updateRating = async (req, res) => {
 export const deleteRating = async (req, res) => {
     try {
         const { id} = req.params // Get ID from the request parameters
+        const trimmedId = id.trim();
+        if (!mongoose.Types.ObjectId.isValid(trimmedId)) {
+            return res.status(400).json({ error: "Invalid ID format" });
+        }
         const deletedRating = await Rating.findOneAndDelete({ ratingID: id }); // To get the rating by its Id and delete 
         if (!deletedRating) {
             return res.status(404).json({ error: "Rating not found" });

@@ -1,21 +1,26 @@
 import express from 'express';
 import { connectDB } from './config/db.js';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import userRoute from './routes/userRoute.js';
-import trendingPopularContentRoutes from './routes/trendingPopularContentRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import ratingRoutes from './routes/ratingRoutes.js';
 import premiumContentRoutes from './routes/premiumContentRoutes.js';
 import movieRoutes from './routes/movieRoutes.js';
 import genreRoutes from './routes/genreRoute.js';
 import adminRoutes from './routes/adminRoute.js';
+import castRoutes from './routes/castRoutes.js';
+
 
 
 
 
 const app = express();
 const port = process.env.PORT || 3000;
-
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(express.json()) ; //Middleware to parse JSON req.body
 app.use(cookieParser());
 
@@ -27,8 +32,6 @@ app.use('/api/admin',  adminRoutes);
 // Use the user routes
 app.use('/api/users', userRoute);
 
-//Use the trendingPopularContent routes
-app.use('/api/content', trendingPopularContentRoutes);
 
 // Use the rewiew routes
 app.use('/api/reviews', reviewRoutes );
@@ -45,6 +48,12 @@ app.use('/api/movies', movieRoutes);
 
 // USe the genre routes
 app.use('/api/genres', genreRoutes);
+
+// Use the cast routes
+app.use('/api/cast', castRoutes);
+
+
+
 
 app.all("*", (req, res, next) => {
   res.status(404).json({ message: "end point does not exist" });

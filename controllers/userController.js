@@ -107,7 +107,7 @@ export const checkUser = async(req, res, next) => {
         if(!user){
             return res.status(400).json({success: true, message:" User not authenticated" });
         }
-     res.json({success:true, message: "User data fetched", data: useData });
+     res.json({success:true, message: "User data fetched", data: user });
      } catch (error) {
         res.status(500).json({message:'internal server'});
  }

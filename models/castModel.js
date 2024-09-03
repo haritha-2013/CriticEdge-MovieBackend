@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 
 const CastSchema = new mongoose.Schema({
-    castID: {
-        type: String,
-        unique: true
-    },
-    name: {
+   name: {
         type: String, required: true
     },
     role: {

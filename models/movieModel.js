@@ -10,7 +10,7 @@ const MovieSchema = new mongoose.Schema({
         type: String
     },
     releaseDate: {
-        type: String
+        type: Date
     },
     duration: {
         type: Number
@@ -28,6 +28,10 @@ const MovieSchema = new mongoose.Schema({
         type: [String]
     },
     rating: {
+        type: Number,
+        default: 0
+    },
+    popularity: {
         type: Number,
         default: 0
     },

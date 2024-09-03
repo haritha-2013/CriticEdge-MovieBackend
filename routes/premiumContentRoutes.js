@@ -4,18 +4,18 @@ import { createPremiumContent, deletePremiumContent, getPremiumContentByID, getP
 const router = express.Router();
 
 // Create a new premium
-router.post('/premium-contents', createPremiumContent);
+router.post('/', createPremiumContent);
 
 // Get all premium content
-router.get('/premium-contents', getPremiumContents);
+router.get('/', getPremiumContents);
 
 // Get premium content by ID 
-router.get('/premium-contents/:id', getPremiumContentByID)
+router.get('/:id', getPremiumContentByID)
 
 // Update premium content
-router.put('/premium/:id', updatePremiumContent);
+router.put('/:id', updatePremiumContent);
 
 // Delete premium content 
-router.delete('/premium/:id', deletePremiumContent);
+router.delete('/:id', deletePremiumContent);
 
 export default router;

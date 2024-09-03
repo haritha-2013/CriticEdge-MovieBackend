@@ -4,13 +4,13 @@ import { createRating, deleteRating, getRatingByID, getRatings, updateRating } f
 const router = express.Router(); 
 
 // Creating a new rating
-router.post('/rating', createRating);
+router.post('/', createRating);
 
 // To get all ratings
-router.get('/ratings', getRatings);
+router.get('/', getRatings);
 
 // To get rating by ID
-router.get('/ratings/:id', getRatingByID);
+router.get('/:id', getRatingByID);
 
 // To update a rating
 router.put('/ratings/:id', updateRating);

@@ -7,15 +7,15 @@ const router = express.Router();
 router.get('/', getGenres);
 
 // Get genre by Id
-router.get('api/genres/:id', getGenreById);
+router.get('/:id', getGenreById);
 
 // Create genre 
 router.post('/', createGenre);
 
 // Update genre
-router.put('/genres/:id', updateGenre);
+router.put('/:id', updateGenre);
 
 // Delete genre 
-router.delete('/genres/:id', deleteGenre);
+router.delete('/:id', deleteGenre);
 
 export default router;

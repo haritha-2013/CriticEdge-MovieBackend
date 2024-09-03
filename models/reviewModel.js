@@ -2,29 +2,31 @@ import mongoose from "mongoose";
 
 const ReviewSchema = new mongoose.Schema({
 
-    reviewID: {
-        type: String,
-        
-    },
-  
+
     movieID: {
-        type: String, 
-        
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Movie',
+        required: true
+    },
+    userID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     rating : {
         type: Number, 
-        required: true
+        required: true,
+
     },
     reviewText: {
-        type: String
-    },
-    reviewDate: { 
-        type: Date,
-        default: Date.now
+        type: String,
+        required: true
     },
 
+  
 
-})
+
+});
 
 const Review = mongoose.model('Review', ReviewSchema);
 export default Review;
