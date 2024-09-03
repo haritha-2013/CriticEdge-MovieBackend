@@ -5,7 +5,7 @@ import { createReview, deleteReview, getReviewByID, getReviewsByMovie, updateRev
 const router = express.Router();
 
 // Create a new review
-router.post('/',authUser, createReview);
+router.post('/', createReview);
 
 // Get all review of a movie
 router.get('/', getReviewsByMovie);
