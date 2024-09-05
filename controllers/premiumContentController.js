@@ -12,6 +12,7 @@ export const createPremiumContent = async (req, res) => {
             movieID,
             accessLevel,
             description,
+            userID: req.user._id
         });
 
         await newPremiumContent.save();
@@ -26,7 +27,7 @@ export const createPremiumContent = async (req, res) => {
 // Get all premium content
 export const getPremiumContents = async (req, res) => {
     try {
-        const premiumContents = await PremiumContent.find(); //Get all from database
+        const premiumContents = await PremiumContent.find({ userdID: req.user._id }); //Get all from database
         res.status(200).json(premiumContents);
 
     } catch (error) {
@@ -40,7 +41,7 @@ export const getPremiumContentByID = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const premiumContent = await PremiumContent.findOne({ premiumContentID: id});
+        const premiumContent = await PremiumContent.findOne({ premiumContentID: id, userID: req.user._id });
 
         if (!PremiumContent) {
             return res.status(404).json({ error: "Premium content not found" });
@@ -58,7 +59,7 @@ export const updatePremiumContent = async (req, res) => {
         const { id } = req.params;
         const { movieID, accessLevel, description } = req.body;
         const updatePremiumContent = await PremiumContent.findOneAndUpdate(
-            { premiumContentID: id },
+            { premiumContentID: id, userID: req.user._id },
             { movieID, accessLevel, description },
             { new: true }
         );
