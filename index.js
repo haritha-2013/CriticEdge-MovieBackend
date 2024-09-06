@@ -19,7 +19,7 @@ import castRoutes from './routes/castRoutes.js';
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(cors({
-  origin: 'http://critic-edge-movie-front-end-7utv.vercel.app',
+  origin: 'http://localhost:5173',
   credentials: true,
 }));
 app.use(express.json()) ; //Middleware to parse JSON req.body
