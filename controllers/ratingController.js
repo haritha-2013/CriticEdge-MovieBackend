@@ -4,17 +4,22 @@ import Rating from '../models/ratingModel.js';
 // Creting a new rating
 export const createRating = async (req, res) => {
     try {
-        const { userID, movieID, rating} = req.body; // get required data from the req.body
-        const ratingID = new mongoose.Types.ObjectId().toString();  // Get a unique ratingID using MongoDB ObjectId
+        const { movieID, rating } = req.body; // get required data from the req.body
+        const userID = req.user._id;
         
-        const newRating = new Rating({ ratingID, userID, movieID, rating }); // Create a new rating with the provided data
+        const existingRating = await Rating.findOne({ userID, movieID });
 
-        await newRating.save();// Save the new rating to the database
-        res.status(201).json({ message: "Rating created successfully", rating: newRating});
+        if (existingRating) {
+            return res.status(400).json({message: "You've already rated this movie."});
+        }
+    const ratingID = new mongoose.Types.ObjectId().toString();
+    const newRating = new Rating({ ratingID, userID, movieID, rating });
 
+    await newRating.save();
+    res.status(201).json({ message: "Rating submitted successfully", rating: newRating });
     } catch (error) {
-        res.status(500).json
-({ error: "Failed to create rating", details: error.message});
+        res.status(500).json({ error: "Failed to create rating", details: error.message });
+        
     }
 };
 

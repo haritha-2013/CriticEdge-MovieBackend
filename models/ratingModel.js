@@ -1,18 +1,22 @@
 import mongoose from "mongoose";
 
 const RatingSchema = new mongoose.Schema({
-    ratingID: {
-        type: String,
-        
+  userID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required:true
     },
     
     movieID: {
-        type: String, 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Movie", 
         required: true
     },
     rating: {
         type: Number,
-        required: true
+        required: true,
+        min: 1,
+        max: 5,
     }
 });
 
